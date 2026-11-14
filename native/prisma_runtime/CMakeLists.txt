@@ -24,7 +24,12 @@ if(PRISMA_WITH_COCOS2D)
         src/cocos2d_host_api.cpp
         src/cocos2d_prototype_scene.cpp
     )
-    target_include_directories(prisma_overlay_state PUBLIC ${COCOS2D_INCLUDE_DIR})
+    target_include_directories(prisma_overlay_state PUBLIC
+        ${COCOS2D_INCLUDE_DIR}
+        ${COCOS2D_INCLUDE_DIR}/platform
+        ${COCOS2D_INCLUDE_DIR}/platform/android
+        ${COCOS2D_INCLUDE_DIR}/../external
+    )
     target_compile_definitions(prisma_overlay_state PUBLIC PRISMA_WITH_COCOS2D=1)
 endif()
 
