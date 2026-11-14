@@ -1,7 +1,14 @@
 cmake_minimum_required(VERSION 3.16)
 project(prisma_overlay_state LANGUAGES CXX)
 
-add_library(prisma_overlay_state STATIC
+# Android needs a loadable shared object; desktop keeps a static library for tests.
+if(ANDROID)
+    set(PRISMA_LIBRARY_TYPE SHARED)
+else()
+    set(PRISMA_LIBRARY_TYPE STATIC)
+endif()
+
+add_library(prisma_overlay_state ${PRISMA_LIBRARY_TYPE}
     src/overlay_state.cpp
     src/game_overlay_renderer.cpp
     src/game_overlay_input.cpp
