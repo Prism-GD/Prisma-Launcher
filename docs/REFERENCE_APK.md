@@ -41,9 +41,11 @@ ELF inspection of `libcocos2dcpp.so` confirms it is a 64-bit AArch64 shared obje
 
 The native library exports Cocos2d JNI entry points including `Java_org_cocos2dx_lib_Cocos2dxRenderer_nativeInit`, `nativeRender`, `nativeOnResume`, and `nativeOnSurfaceChanged`. It also exports bridge methods under `Java_com_customRobTop_JniToCpp_*`.
 
+A preliminary DEX string-table inspection finds the declared app activity class `com.robtopx.geometryjump.GeometryJump`, the bridge class `com.customRobTop.JniToCpp`, and Cocos2d Android classes including `Cocos2dxActivity`, `Cocos2dxGLSurfaceView`, `Cocos2dxRenderer`, and `Cocos2dxHelper`. It also contains method-name strings such as `onCreate`, `onResume`, `loadLibrary`, and `nativeInit`. This is string-level evidence only, not a reconstructed Java call graph.
+
 ## Analysis status and limits
 
-This is static archive, manifest, and ELF metadata inspection only. The APK has not been installed or executed. The signing certificate and runtime behavior have not yet been verified. The exported JNI symbols identify integration boundaries, but do not by themselves establish a safe or supported method for injecting code or cloning the game.
+This is static archive, manifest, DEX string-table, and ELF metadata inspection only. The APK has not been installed or executed. The signing certificate and runtime behavior have not yet been verified. The exported JNI symbols identify integration boundaries, but do not by themselves establish a safe or supported method for injecting code or cloning the game.
 
 ## Prisma design implications
 
@@ -56,5 +58,5 @@ This is static archive, manifest, and ELF metadata inspection only. The APK has 
 ## Next analysis steps
 
 1. Verify APK signing certificate and package signing scheme.
-2. Inspect the Java/Kotlin DEX activity at a high level to map its calls into the Cocos2d native layer.
+2. Inspect the DEX activity bytecode at a high level to map its calls into the Cocos2d native layer.
 3. Design a lawful, non-destructive installed-game detection and launch flow for Prisma.
