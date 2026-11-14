@@ -13,7 +13,7 @@ This document records the APK supplied in the Prisma Launcher development conver
 
 | Property | Observed value |
 |---|---:|
-| File size | 167 MiB (174,? bytes; see exact size below) |
+| File size | 174,650,508 bytes (about 166.5 MiB) |
 | SHA-256 | `780eb29421c9eb4eee068ca195b132b8fe96a7473342fe67e23e7f4a6e245fb0` |
 | Archive entries | 6,185 |
 | Total uncompressed entry size | 197,520,474 bytes |
