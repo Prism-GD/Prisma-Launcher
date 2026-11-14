@@ -14,7 +14,10 @@ target_include_directories(prisma_overlay_state
 target_compile_features(prisma_overlay_state PUBLIC cxx_std_17)
 
 if(ANDROID)
-    find_library(PRISMA_GLESV2_LIBRARY GLESv2 REQUIRED)
+    find_library(PRISMA_GLESV2_LIBRARY GLESv2)
+    if(NOT PRISMA_GLESV2_LIBRARY)
+        message(FATAL_ERROR "OpenGL ES 2 library (GLESv2) was not found")
+    endif()
     target_link_libraries(prisma_overlay_state PUBLIC ${PRISMA_GLESV2_LIBRARY})
 endif()
 
