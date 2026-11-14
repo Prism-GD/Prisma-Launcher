@@ -11,6 +11,7 @@ namespace prisma {
 class Cocos2dOverlayLayer final : public cocos2d::Layer {
 public:
     static Cocos2dOverlayLayer* create();
+    static Cocos2dOverlayLayer* attachToScene(cocos2d::Scene* scene);
 
     bool init() override;
     void onEnter() override;
