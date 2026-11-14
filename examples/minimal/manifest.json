@@ -1,0 +1,29 @@
+{
+  "format_version": "1",
+  "id": "dev.prisma.example",
+  "name": "Example Mod",
+  "version": "1.0.0",
+  "description": "A minimal example Prisma mod package.",
+  "authors": [
+    "Prisma Community"
+  ],
+  "game": {
+    "id": "geometry-dash",
+    "versions": [
+      "2.2"
+    ]
+  },
+  "runtime": {
+    "id": "prisma",
+    "api": "0.1",
+    "targets": [
+      "android-arm64"
+    ]
+  },
+  "entrypoint": "payload/android-arm64/example.so",
+  "dependencies": [],
+  "permissions": [],
+  "assets": {
+    "icon": "assets/icon.png"
+  }
+}
