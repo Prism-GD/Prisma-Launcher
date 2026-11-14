@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import dev.prisma.launcher.packages.GamePackageLayoutInspector
 import dev.prisma.launcher.packages.InstalledGameDetector
 import dev.prisma.launcher.runtime.NativeOverlayRuntime
 import dev.prisma.launcher.ui.LauncherScreen
@@ -35,12 +36,19 @@ class MainActivity : ComponentActivity() {
                     }
                 },
                 onSettings = {
-                    val status = if (nativeRuntime.isLoaded) {
-                        "Runtime nativo Prisma carregado."
+                    val runtimeStatus = if (nativeRuntime.isLoaded) {
+                        "Runtime Prisma: carregado no processo do launcher.\n\n"
                     } else {
-                        "Runtime nativo Prisma indisponível."
+                        "Runtime Prisma: indisponível no processo do launcher.\n\n"
                     }
-                    Toast.makeText(this, status, Toast.LENGTH_SHORT).show()
+                    val packageReport = GamePackageLayoutInspector(applicationContext)
+                        .inspect()
+                        .format()
+                    android.app.AlertDialog.Builder(this)
+                        .setTitle("Diagnóstico do Geometry Dash")
+                        .setMessage(runtimeStatus + packageReport)
+                        .setPositiveButton("OK", null)
+                        .show()
                 }
             )
         }
