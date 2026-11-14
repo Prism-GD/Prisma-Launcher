@@ -1,4 +1,4 @@
-name: Prisma native core
+name: Prisma micro-prototype
 
 on:
   push:
@@ -7,17 +7,24 @@ on:
       - prisma/bootstrap
     paths:
       - "native/prisma_runtime/**"
+      - "docs/MICRO_PROTOTYPE.md"
       - ".github/workflows/prisma-native.yml"
   pull_request:
     paths:
       - "native/prisma_runtime/**"
+      - "docs/MICRO_PROTOTYPE.md"
       - ".github/workflows/prisma-native.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
 
 jobs:
-  overlay-state:
+  native-core:
+    name: Build native core and run tests
     runs-on: ubuntu-latest
     steps:
-      - name: Check out repository
+      - name: Check out Prisma
         uses: actions/checkout@v4
 
       - name: Configure CMake
@@ -28,3 +35,27 @@ jobs:
 
       - name: Run tests
         run: ctest --test-dir build --output-on-failure
+
+  cocos2d-adapter:
+    name: Compile Cocos2d-x adapter
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Prisma
+        uses: actions/checkout@v4
+
+      - name: Check out pinned Cocos2d-x headers
+        uses: actions/checkout@v4
+        with:
+          repository: cocos2d/cocos2d-x
+          ref: cocos2d-x-3.17.2
+          path: third_party/cocos2d-x
+
+      - name: Configure adapter build
+        run: |
+          cmake -S native/prisma_runtime -B build-cocos \
+            -DPRISMA_BUILD_TESTS=OFF \
+            -DPRISMA_WITH_COCOS2D=ON \
+            -DCOCOS2D_INCLUDE_DIR="$GITHUB_WORKSPACE/third_party/cocos2d-x/cocos"
+
+      - name: Compile adapter
+        run: cmake --build build-cocos --parallel
