@@ -7,6 +7,8 @@ on:
       - prisma/bootstrap
     paths:
       - "native/prisma_runtime/**"
+      - "app/src/main/cpp/**"
+      - "app/src/main/java/dev/prisma/launcher/runtime/**"
       - "docs/MICRO_PROTOTYPE.md"
       - ".github/workflows/prisma-native.yml"
   pull_request:
@@ -55,23 +57,26 @@ jobs:
 
       - name: Configure Android ARM64 build
         run: |
-          cmake -S native/prisma_runtime -B build-android-arm64 \
+          cmake -S app/src/main/cpp -B build-android-arm64 \
             -DCMAKE_TOOLCHAIN_FILE="$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake" \
             -DANDROID_ABI=arm64-v8a \
             -DANDROID_PLATFORM=android-23 \
             -DANDROID_STL=c++_static \
-            -DPRISMA_BUILD_TESTS=OFF
+            -DPRISMA_NATIVE_ROOT="$GITHUB_WORKSPACE/native/prisma_runtime"
 
       - name: Compile Android ARM64 shared runtime
         run: |
           cmake --build build-android-arm64 --parallel
-          test -f build-android-arm64/libprisma_overlay_state.so
+          test -f build-android-arm64/prisma_runtime/libprisma_overlay_state.so
+          test -f build-android-arm64/libprisma_launcher_jni.so
 
       - name: Upload Android ARM64 runtime
         uses: actions/upload-artifact@v4
         with:
           name: prisma-android-arm64-runtime
-          path: build-android-arm64/libprisma_overlay_state.so
+          path: |
+            build-android-arm64/libprisma_launcher_jni.so
+            build-android-arm64/prisma_runtime/libprisma_overlay_state.so
           if-no-files-found: error
           retention-days: 14
 
