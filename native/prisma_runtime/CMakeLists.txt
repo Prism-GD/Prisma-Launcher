@@ -28,9 +28,14 @@ if(PRISMA_WITH_COCOS2D)
         ${COCOS2D_INCLUDE_DIR}
         ${COCOS2D_INCLUDE_DIR}/platform
         ${COCOS2D_INCLUDE_DIR}/platform/android
-        ${COCOS2D_INCLUDE_DIR}/../external
+        ${COCOS2D_INCLUDE_DIR}/../../external
     )
     target_compile_definitions(prisma_overlay_state PUBLIC PRISMA_WITH_COCOS2D=1)
+    # Cocos2d-x 3.17.2 detects desktop Linux through the LINUX macro.
+    # GitHub's Ubuntu runner does not define it automatically.
+    if(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND NOT ANDROID)
+        target_compile_definitions(prisma_overlay_state PUBLIC LINUX=1)
+    endif()
 endif()
 
 if(ANDROID)
