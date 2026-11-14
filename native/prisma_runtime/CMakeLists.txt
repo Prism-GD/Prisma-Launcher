@@ -13,6 +13,17 @@ target_include_directories(prisma_overlay_state
 
 target_compile_features(prisma_overlay_state PUBLIC cxx_std_17)
 
+option(PRISMA_WITH_COCOS2D "Build the optional Cocos2d-x scene adapter" OFF)
+set(COCOS2D_INCLUDE_DIR "" CACHE PATH "Directory containing cocos2d.h")
+if(PRISMA_WITH_COCOS2D)
+    if(NOT COCOS2D_INCLUDE_DIR OR NOT EXISTS "${COCOS2D_INCLUDE_DIR}/cocos2d.h")
+        message(FATAL_ERROR "Set COCOS2D_INCLUDE_DIR to a directory containing cocos2d.h")
+    endif()
+    target_sources(prisma_overlay_state PRIVATE src/cocos2d_overlay_layer.cpp)
+    target_include_directories(prisma_overlay_state PUBLIC ${COCOS2D_INCLUDE_DIR})
+    target_compile_definitions(prisma_overlay_state PUBLIC PRISMA_WITH_COCOS2D=1)
+endif()
+
 if(ANDROID)
     find_library(PRISMA_GLESV2_LIBRARY GLESv2)
     if(NOT PRISMA_GLESV2_LIBRARY)
