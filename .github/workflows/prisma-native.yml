@@ -36,6 +36,30 @@ jobs:
       - name: Run tests
         run: ctest --test-dir build --output-on-failure
 
+  android-arm64-core:
+    name: Cross-compile Android ARM64 core
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Prisma
+        uses: actions/checkout@v4
+
+      - name: Set up Android SDK and NDK
+        uses: android-actions/setup-android@v3
+        with:
+          ndk-version: 27.2.12479018
+
+      - name: Configure Android ARM64 build
+        run: |
+          cmake -S native/prisma_runtime -B build-android-arm64 \
+            -DCMAKE_TOOLCHAIN_FILE="$ANDROID_NDK_HOME/build/cmake/android.toolchain.cmake" \
+            -DANDROID_ABI=arm64-v8a \
+            -DANDROID_PLATFORM=android-23 \
+            -DANDROID_STL=c++_static \
+            -DPRISMA_BUILD_TESTS=OFF
+
+      - name: Compile Android ARM64 core
+        run: cmake --build build-android-arm64 --parallel
+
   cocos2d-adapter:
     name: Compile Cocos2d-x adapter
     runs-on: ubuntu-latest
