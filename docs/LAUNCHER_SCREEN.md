@@ -1,26 +1,18 @@
 # Prisma Launcher — Home screen
 
-The first Compose home-screen implementation is in
-`app/src/main/java/dev/prisma/launcher/ui/LauncherScreen.kt`.
+The Compose implementation is in `app/src/main/java/dev/prisma/launcher/ui/LauncherScreen.kt`.
 
 ## Included
 - Prisma branding and dark purple visual theme.
 - Geometry Dash installation status from `InstalledGameDetector`.
 - Version name/code and ARM64 capability display.
 - Play button enabled only when the game is installed, enabled, and launchable.
-- Navigation callbacks for Mods and Settings.
-- Preview status label; no claim that mod loading is implemented.
+- Settings entry point.
 
-## Host integration
+## Product decision
 
-Create an `InstalledGameDetector` with an Android Context and call
-`LauncherScreen(detector, onPlay, onMods, onSettings)` from the app's Compose
-content. The host Activity must implement the callbacks and launch the detected
-game through Android's package launch intent. The screen itself does not clone,
-patch, modify, or inject into Geometry Dash.
+The launcher home is only for detecting and starting Geometry Dash. Mod management is not a separate page here: the intended Mods interface is an in-game panel opened by tapping the Prisma orb near the lower corner/edge of the game screen. See `docs/IN_GAME_OVERLAY.md`.
 
 ## Build status
 
-This source uses Jetpack Compose Material 3. The repository still needs a
-complete Android Gradle project and dependency configuration before it can be
-compiled or installed.
+This source uses Jetpack Compose Material 3. The repository still needs a complete Android Gradle project and dependency configuration before it can be compiled or installed. The in-game orb/panel and game runtime integration are not implemented yet.
