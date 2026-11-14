@@ -1,7 +1,6 @@
 package dev.prisma.launcher.packages
 
 import android.content.Context
-import android.content.pm.ApplicationInfo
 import android.content.pm.PackageInfo
 import android.content.pm.PackageManager
 import android.os.Build
@@ -44,8 +43,10 @@ class GamePackageLayoutInspector(context: Context) {
         val libraryNames = listOf("libfmod.so", "libcocos2dcpp.so")
         val libraryPresence = libraryNames.associateWith { library ->
             val extracted = nativeDirectory?.let { File(it, library).isFile } == true
-            val inApk = apkPaths.any { apkPath -> containsNativeLibrary(apkPath, library) }
-            LibraryPresence(extracted = extracted, packaged = inApk)
+            val packagedAbis = apkPaths.flatMap { apkPath ->
+                findPackagedAbis(apkPath, library)
+            }.toSet()
+            LibraryPresence(extracted = extracted, packagedAbis = packagedAbis)
         }
 
         return Report(
@@ -61,19 +62,23 @@ class GamePackageLayoutInspector(context: Context) {
         )
     }
 
-    private fun containsNativeLibrary(apkPath: String, libraryName: String): Boolean {
+    private fun findPackagedAbis(apkPath: String, libraryName: String): Set<String> {
         return try {
             ZipFile(apkPath).use { zip ->
-                val prefix = "lib/"
-                val suffix = "/$libraryName"
-                zip.entries().asSequence().any { entry ->
-                    !entry.isDirectory &&
-                        entry.name.startsWith(prefix) &&
-                        entry.name.endsWith(suffix)
-                }
+                zip.entries().asSequence()
+                    .filter { !it.isDirectory }
+                    .mapNotNull { entry ->
+                        val parts = entry.name.split('/')
+                        if (parts.size == 3 && parts[0] == "lib" && parts[2] == libraryName) {
+                            parts[1]
+                        } else {
+                            null
+                        }
+                    }
+                    .toSet()
             }
         } catch (_: Exception) {
-            false
+            emptySet()
         }
     }
 
@@ -98,10 +103,8 @@ class GamePackageLayoutInspector(context: Context) {
 
     data class LibraryPresence(
         val extracted: Boolean,
-        val packaged: Boolean,
-    ) {
-        fun found(): Boolean = extracted || packaged
-    }
+        val packagedAbis: Set<String>,
+    )
 
     data class Report(
         val installed: Boolean,
@@ -139,7 +142,8 @@ class GamePackageLayoutInspector(context: Context) {
                 append(
                     when {
                         presence.extracted -> "extraída"
-                        presence.packaged -> "dentro do APK/split"
+                        presence.packagedAbis.isNotEmpty() ->
+                            "no APK/split (" + presence.packagedAbis.sorted().joinToString() + ")"
                         else -> "não encontrada"
                     },
                 )
