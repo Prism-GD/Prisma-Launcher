@@ -21,7 +21,12 @@ private val PrismaPanel = Color(0xFF201A32)
 
 /** Launcher home screen. Mod management is intentionally inside the game overlay. */
 @Composable
-fun LauncherScreen(detector: InstalledGameDetector, onPlay: () -> Unit, onSettings: () -> Unit) {
+fun LauncherScreen(
+    detector: InstalledGameDetector,
+    onPlay: () -> Unit,
+    onHostPreview: () -> Unit,
+    onSettings: () -> Unit,
+) {
     var detection by remember { mutableStateOf<InstalledGameDetector.DetectionResult?>(null) }
     LaunchedEffect(detector) { detection = detector.detect() }
     val installed = detection as? InstalledGameDetector.DetectionResult.Installed
@@ -48,16 +53,24 @@ fun LauncherScreen(detector: InstalledGameDetector, onPlay: () -> Unit, onSettin
                             null -> Text("Verificando instalação…", color = Color.LightGray)
                             is InstalledGameDetector.DetectionResult.Installed -> {
                                 Text(if (canPlay) "●  Instalado e pronto para abrir" else "●  Instalado, mas não pode ser iniciado", color = if (canPlay) Color(0xFF7DE6A5) else Color(0xFFFFC66D), fontSize = 13.sp)
-                                Text("Versão ${result.versionName}  •  código ${result.versionCode}", color = Color.LightGray, fontSize = 12.sp)
+                                Text("Versão " + result.versionName + "  •  código " + result.versionCode, color = Color.LightGray, fontSize = 12.sp)
                                 Text(if (result.supportsArm64) "Arquitetura ARM64 compatível" else "ARM64 não detectada", color = Color.LightGray, fontSize = 12.sp)
                             }
                             is InstalledGameDetector.DetectionResult.NotInstalled -> Text("Jogo não encontrado neste dispositivo.", color = Color(0xFFFFC66D), fontSize = 13.sp)
-                            is InstalledGameDetector.DetectionResult.CheckFailed -> Text("Não foi possível verificar: ${result.message}", color = Color(0xFFFFC66D), fontSize = 13.sp)
+                            is InstalledGameDetector.DetectionResult.CheckFailed -> Text("Não foi possível verificar: " + result.message, color = Color(0xFFFFC66D), fontSize = 13.sp)
                         }
                         Button(onClick = onPlay, enabled = canPlay, modifier = Modifier.fillMaxWidth().height(52.dp), shape = RoundedCornerShape(16.dp), colors = ButtonDefaults.buttonColors(containerColor = PrismaPurple)) {
                             Text("JOGAR", fontWeight = FontWeight.Black, letterSpacing = 1.sp)
                         }
                     }
+                }
+                OutlinedButton(
+                    onClick = onHostPreview,
+                    modifier = Modifier.fillMaxWidth().height(54.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(contentColor = PrismaPurple),
+                ) {
+                    Text("TESTAR HOST OPENGL (EXPERIMENTAL)", fontWeight = FontWeight.Bold, fontSize = 11.sp)
                 }
                 OutlinedButton(onClick = onSettings, modifier = Modifier.fillMaxWidth().height(64.dp), shape = RoundedCornerShape(18.dp), colors = ButtonDefaults.outlinedButtonColors(contentColor = Color.White)) {
                     Text("AJUSTES  •  Preferências e diagnóstico", fontWeight = FontWeight.Bold, fontSize = 12.sp)
