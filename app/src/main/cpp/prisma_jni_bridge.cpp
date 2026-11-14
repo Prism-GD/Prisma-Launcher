@@ -3,6 +3,7 @@
 #include "prisma/overlay_state.hpp"
 
 #include <cstdint>
+#include <new>
 
 namespace {
 
