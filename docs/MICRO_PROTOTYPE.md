@@ -39,3 +39,10 @@ This scene is a standalone UI validation harness. It does not attach itself
 to the commercial Geometry Dash process. The public project does not contain
 the game's Cocos2d headers, libraries or source, and no verified host call site
 is currently available. The Geometry Dash integration milestone remains open.
+
+
+## Android launcher JNI bridge
+
+The Android app now has a CMake entry point at `app/src/main/cpp` and a Kotlin wrapper at `app/src/main/java/dev/prisma/launcher/runtime/NativeOverlayRuntime.kt`. The bridge owns an instance of the portable overlay state and exposes panel state and tab selection to Kotlin.
+
+This milestone is source-integrated into the Android application. It does not attach to Geometry Dash or draw an in-game overlay. See [Android JNI integration](ANDROID_JNI_INTEGRATION.md) for the current boundary and build instructions.
