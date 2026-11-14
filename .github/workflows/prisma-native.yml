@@ -51,7 +51,7 @@ jobs:
           path: third_party/cocos2d-x
 
       - name: Install Cocos2d-x desktop headers
-        run: sudo apt-get update && sudo apt-get install -y libglew-dev libgl1-mesa-dev
+        run: sudo apt-get update && sudo apt-get install -y libglew-dev libgl1-mesa-dev libglfw3-dev
 
       - name: Configure adapter build
         run: |
