@@ -1,0 +1,30 @@
+name: Prisma native core
+
+on:
+  push:
+    branches:
+      - main
+      - prisma/bootstrap
+    paths:
+      - "native/prisma_runtime/**"
+      - ".github/workflows/prisma-native.yml"
+  pull_request:
+    paths:
+      - "native/prisma_runtime/**"
+      - ".github/workflows/prisma-native.yml"
+
+jobs:
+  overlay-state:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Configure CMake
+        run: cmake -S native/prisma_runtime -B build -DPRISMA_BUILD_TESTS=ON
+
+      - name: Build native core
+        run: cmake --build build --parallel
+
+      - name: Run tests
+        run: ctest --test-dir build --output-on-failure
