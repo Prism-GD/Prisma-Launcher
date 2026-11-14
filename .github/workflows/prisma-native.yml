@@ -9,6 +9,12 @@ on:
       - "native/prisma_runtime/**"
       - "app/src/main/cpp/**"
       - "app/src/main/java/dev/prisma/launcher/runtime/**"
+      - "app/build.gradle.kts"
+      - "app/src/main/AndroidManifest.xml"
+      - "app/src/main/java/dev/prisma/launcher/MainActivity.kt"
+      - "build.gradle.kts"
+      - "settings.gradle.kts"
+      - "gradle.properties"
       - "docs/MICRO_PROTOTYPE.md"
       - ".github/workflows/prisma-native.yml"
   pull_request:
@@ -16,6 +22,12 @@ on:
       - "native/prisma_runtime/**"
       - "app/src/main/cpp/**"
       - "app/src/main/java/dev/prisma/launcher/runtime/**"
+      - "app/build.gradle.kts"
+      - "app/src/main/AndroidManifest.xml"
+      - "app/src/main/java/dev/prisma/launcher/MainActivity.kt"
+      - "build.gradle.kts"
+      - "settings.gradle.kts"
+      - "gradle.properties"
       - "docs/MICRO_PROTOTYPE.md"
       - ".github/workflows/prisma-native.yml"
   workflow_dispatch:
@@ -79,6 +91,44 @@ jobs:
           path: |
             build-android-arm64/libprisma_launcher_jni.so
             build-android-arm64/prisma_runtime/libprisma_overlay_state.so
+          if-no-files-found: error
+          retention-days: 14
+
+  android-app:
+    name: Assemble Prisma Android APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Prisma
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Android SDK, NDK and CMake
+        uses: android-actions/setup-android@v3
+        with:
+          packages: |
+            platforms;android-35
+            build-tools;35.0.0
+            cmake;3.22.1
+            ndk;27.2.12479018
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "8.9"
+
+      - name: Build debug APK
+        run: gradle --no-daemon :app:assembleDebug
+
+      - name: Upload Prisma debug APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: prisma-launcher-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
           retention-days: 14
 
