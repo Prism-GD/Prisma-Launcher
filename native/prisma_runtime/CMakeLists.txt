@@ -3,6 +3,8 @@ project(prisma_overlay_state LANGUAGES CXX)
 
 add_library(prisma_overlay_state STATIC
     src/overlay_state.cpp
+    src/game_overlay_renderer.cpp
+    src/game_overlay_input.cpp
 )
 
 target_include_directories(prisma_overlay_state
@@ -10,6 +12,11 @@ target_include_directories(prisma_overlay_state
 )
 
 target_compile_features(prisma_overlay_state PUBLIC cxx_std_17)
+
+if(ANDROID)
+    find_library(PRISMA_GLESV2_LIBRARY GLESv2 REQUIRED)
+    target_link_libraries(prisma_overlay_state PUBLIC ${PRISMA_GLESV2_LIBRARY})
+endif()
 
 option(PRISMA_BUILD_TESTS "Build Prisma runtime state tests" ON)
 
