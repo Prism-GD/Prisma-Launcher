@@ -14,6 +14,8 @@ on:
   pull_request:
     paths:
       - "native/prisma_runtime/**"
+      - "app/src/main/cpp/**"
+      - "app/src/main/java/dev/prisma/launcher/runtime/**"
       - "docs/MICRO_PROTOTYPE.md"
       - ".github/workflows/prisma-native.yml"
   workflow_dispatch:
