@@ -2,6 +2,7 @@ package dev.prisma.launcher.packages
 
 import org.json.JSONException
 import org.json.JSONObject
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.IOException
 import java.util.Locale
@@ -56,7 +57,7 @@ object PrismPackageValidator {
                 val names = HashSet<String>()
                 var count = 0
                 var totalSize = 0L
-                var manifestEntry = zip.getEntry(MANIFEST_PATH)
+                val manifestEntry = zip.getEntry(MANIFEST_PATH)
                     ?: return Result.Invalid("manifest.json não encontrado na raiz.")
 
                 val entries = zip.entries()
@@ -92,9 +93,10 @@ object PrismPackageValidator {
                     return Result.Invalid("manifest.json excede o limite permitido.")
                 }
 
-                val manifestText = zip.getInputStream(manifestEntry).bufferedReader(Charsets.UTF_8).use {
-                    it.readText()
+                val manifestBytes = zip.getInputStream(manifestEntry).use {
+                    readBounded(it, MAX_MANIFEST_BYTES)
                 }
+                val manifestText = manifestBytes.toString(Charsets.UTF_8)
                 val metadata = parseManifest(manifestText)
                     ?: return Result.Invalid("manifest.json inválido ou incompleto.")
 
@@ -113,6 +115,20 @@ object PrismPackageValidator {
         } catch (e: IllegalArgumentException) {
             Result.Invalid("O pacote contém dados inválidos.")
         }
+    }
+
+    private fun readBounded(input: java.io.InputStream, limit: Long): ByteArray {
+        val output = ByteArrayOutputStream()
+        val buffer = ByteArray(8 * 1024)
+        var total = 0L
+        while (true) {
+            val read = input.read(buffer)
+            if (read < 0) break
+            total += read
+            if (total > limit) throw IOException("manifest.json excede o limite durante a leitura")
+            output.write(buffer, 0, read)
+        }
+        return output.toByteArray()
     }
 
     private fun validateEntryPath(path: String): String? {
