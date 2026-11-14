@@ -62,8 +62,18 @@ jobs:
             -DANDROID_STL=c++_static \
             -DPRISMA_BUILD_TESTS=OFF
 
-      - name: Compile Android ARM64 core
-        run: cmake --build build-android-arm64 --parallel
+      - name: Compile Android ARM64 shared runtime
+        run: |
+          cmake --build build-android-arm64 --parallel
+          test -f build-android-arm64/libprisma_overlay_state.so
+
+      - name: Upload Android ARM64 runtime
+        uses: actions/upload-artifact@v4
+        with:
+          name: prisma-android-arm64-runtime
+          path: build-android-arm64/libprisma_overlay_state.so
+          if-no-files-found: error
+          retention-days: 14
 
   cocos2d-adapter:
     name: Compile Cocos2d-x adapter
