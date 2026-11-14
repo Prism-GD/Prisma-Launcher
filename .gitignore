@@ -1,0 +1,20 @@
+# Build outputs
+build/
+out/
+dist/
+*.apk
+*.aab
+*.aar
+
+# IDE and local machine
+.idea/
+.vscode/
+*.iml
+.DS_Store
+Thumbs.db
+local.properties
+
+# Logs and temporary files
+*.log
+*.tmp
+.cache/
