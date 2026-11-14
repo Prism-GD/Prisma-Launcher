@@ -31,6 +31,12 @@ if(PRISMA_WITH_COCOS2D)
         ${COCOS2D_INCLUDE_DIR}/../../external
     )
     target_compile_definitions(prisma_overlay_state PUBLIC PRISMA_WITH_COCOS2D=1)
+    # Cocos2d-x 3.17.2 includes glfw3.h without the GLFW/ prefix on Linux.
+    # Debian/Ubuntu installs it under /usr/include/GLFW, so add that directory.
+    find_path(PRISMA_GLFW_INCLUDE_DIR glfw3.h PATHS /usr/include/GLFW)
+    if(PRISMA_GLFW_INCLUDE_DIR)
+        target_include_directories(prisma_overlay_state PUBLIC ${PRISMA_GLFW_INCLUDE_DIR})
+    endif()
     # Cocos2d-x 3.17.2 detects desktop Linux through the LINUX macro.
     # GitHub's Ubuntu runner does not define it automatically.
     if(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND NOT ANDROID)
