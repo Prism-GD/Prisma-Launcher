@@ -3,6 +3,7 @@
 #ifdef __ANDROID__
 #include <GLES2/gl2.h>
 
+#include <algorithm>
 #include <array>
 #include <cmath>
 
