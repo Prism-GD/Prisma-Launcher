@@ -22,6 +22,13 @@ Cocos2dOverlayLayer* Cocos2dOverlayLayer::create() {
     return nullptr;
 }
 
+Cocos2dOverlayLayer* Cocos2dOverlayLayer::attachToScene(Scene* scene) {
+    if (!scene) return nullptr;
+    auto* layer = Cocos2dOverlayLayer::create();
+    if (layer) scene->addChild(layer, 100000);
+    return layer;
+}
+
 bool Cocos2dOverlayLayer::init() {
     if (!Layer::init()) return false;
     const auto size = Director::getInstance()->getWinSize();
