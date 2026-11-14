@@ -1,10 +1,12 @@
 package dev.prisma.launcher
 
 import android.content.ActivityNotFoundException
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import dev.prisma.launcher.game.PrismaGameActivity
 import dev.prisma.launcher.packages.GamePackageLayoutInspector
 import dev.prisma.launcher.packages.InstalledGameDetector
 import dev.prisma.launcher.runtime.NativeOverlayRuntime
@@ -34,6 +36,9 @@ class MainActivity : ComponentActivity() {
                             Toast.makeText(this, "Não foi possível abrir Geometry Dash.", Toast.LENGTH_SHORT).show()
                         }
                     }
+                },
+                onHostPreview = {
+                    startActivity(Intent(this, PrismaGameActivity::class.java))
                 },
                 onSettings = {
                     val runtimeStatus = if (nativeRuntime.isLoaded) {
